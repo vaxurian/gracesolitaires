@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Grace Solitaires — Lab-Grown Diamond Solitaires, Karol Bagh, Delhi</title>
+<meta name="description" content="Certified lab-grown diamond solitaires in 9 karat gold, from Grace Solitaires, Karol Bagh, New Delhi. Timeless craftsmanship, honest guidance and fair prices. Book a private viewing.">
+<meta name="theme-color" content="#050505">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Grace Solitaires">
+<meta property="og:title" content="Grace Solitaires — The Solitaire">
+<meta property="og:description" content="Certified lab-grown diamond solitaires, cut for light and made to be handed down. Karol Bagh, New Delhi.">
+<meta property="og:url" content="https://gracesolitaires.in/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://gracesolitaires.in/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "JewelryStore",
+  "name": "Grace Solitaires",
+  "url": "https://gracesolitaires.in/",
+  "description": "Lab-grown diamond solitaires, rings, earrings, pendants and bangles in 9 karat gold.",
+  "telephone": "+91-9811001259",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "2808/20, Beadonpura, Karol Bagh, Ground Floor",
+    "addressLocality": "New Delhi",
+    "postalCode": "110005",
+    "addressCountry": "IN"
+  },
+  "geo": {"@type": "GeoCoordinates", "latitude": 28.651216, "longitude": 77.191468}
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  :root{
+    --gold:#d9bd92;
+    --bg:#050505;
+    --text:#e9e6e1;
+  }
+
+  html,body{background:var(--bg);}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    color:var(--text);
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    user-select:none;
+  }
+
+  canvas#scene{
+    position:fixed;inset:0;width:100%;height:100%;
+    display:block;z-index:1;
+  }
+  .vignette{
+    position:fixed;inset:0;z-index:2;pointer-events:none;
+    background:
+      radial-gradient(115% 85% at 50% 45%,
+        rgba(0,0,0,0) 30%,
+        rgba(0,0,0,.5) 72%,
+        rgba(0,0,0,.94) 100%);
+  }
+  .grain{
+    position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.045;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    background-size:140px 140px;
+  }
+
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:20;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:calc(26px + env(safe-area-inset-top,0px)) clamp(22px,6vw,64px) 26px;
+    font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;
+  }
+  nav .brand{
+    font-family:'Cormorant Garamond',serif;
+    font-size:16px;letter-spacing:.34em;color:#f4efe7;white-space:nowrap;
+  }
+  nav ul{display:flex;gap:clamp(18px,3vw,38px);list-style:none}
+  nav ul li{color:rgba(233,230,225,.5);transition:color .4s ease}
+  nav ul li:hover{color:var(--gold)}
+
+  main{position:relative;z-index:3}
+
+  section{
+    position:relative;
+    height:100vh;height:100svh;
+    display:flex;
+    align-items:center;
+    padding:0 clamp(22px,7vw,140px);
+  }
+  section.hero{align-items:flex-end;padding-bottom:16vh}
+  section.right{justify-content:flex-end;text-align:right}
+
+  .copy{max-width:440px}
+
+  .eyebrow{
+    font-size:10px;letter-spacing:.4em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:22px;
+  }
+
+  h1,h2{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:300;line-height:.92;letter-spacing:-.012em;
+    color:#f7f4ef;
+  }
+  h1{font-size:clamp(52px,9vw,132px)}
+  h2{font-size:clamp(34px,4.6vw,66px);margin-bottom:22px}
+
+  p{
+    font-size:14.5px;line-height:1.9;font-weight:300;
+    color:rgba(233,230,225,.58);
+    max-width:38ch;margin-top:8px;
+  }
+  section.right p{margin-left:auto}
+
+  .cta{
+    margin-top:34px;
+    display:inline-block;
+    background:none;cursor:pointer;
+    border:1px solid rgba(217,189,146,.45);
+    color:var(--gold);
+    padding:15px 32px;
+    font-family:'Inter',sans-serif;
+    font-size:10px;letter-spacing:.32em;text-transform:uppercase;
+    transition:background .45s ease,color .45s ease,border-color .45s ease;
+  }
+  .cta:hover{background:var(--gold);color:#0a0a0a;border-color:var(--gold)}
+
+  .cue{
+    position:absolute;left:50%;bottom:36px;transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:14px;
+    font-size:9px;letter-spacing:.36em;text-transform:uppercase;
+    color:rgba(233,230,225,.38);
+  }
+  .cue i{
+    display:block;width:1px;height:46px;
+    background:linear-gradient(to bottom,rgba(217,189,146,0),rgba(217,189,146,.85));
+    animation:pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:.35;transform:scaleY(.7)}50%{opacity:1;transform:scaleY(1)}}
+
+  #loader{
+    position:fixed;inset:0;z-index:60;
+    background:#050505;display:grid;place-items:center;
+  }
+  .loader-inner{width:min(330px,82vw);text-align:center}
+  .loader-brand{
+    font-family:'Cormorant Garamond',serif;
+    font-size:18px;letter-spacing:.4em;color:#e8e2d8;white-space:nowrap;
+    margin-bottom:24px;padding-left:.4em;
+  }
+  .bar{height:1px;background:rgba(255,255,255,.13);overflow:hidden}
+  .bar span{
+    display:block;height:100%;width:100%;
+    background:linear-gradient(90deg,#8a7346,#e8d3ab);
+    transform:scaleX(0);transform-origin:left center;
+  }
+  .loader-note{
+    margin-top:16px;font-size:8.5px;letter-spacing:.36em;
+    text-transform:uppercase;color:rgba(233,230,225,.32);
+  }
+
+  html{scroll-behavior:smooth}
+  :root{color-scheme:dark}
+  .copy{text-shadow:0 0 28px rgba(0,0,0,.75)}
+  nav ul li a{color:inherit;text-decoration:none;display:block;padding:8px 0}
+  a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:1px solid var(--gold);outline-offset:4px}
+  .progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:30;pointer-events:none}
+  .progress span{display:block;height:100%;background:linear-gradient(90deg,#8a7346,#e8d3ab);transform:scaleX(0);transform-origin:left center}
+  .modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:24px;background:rgba(5,5,5,.78);backdrop-filter:blur(10px);opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s}
+  .modal.open{opacity:1;visibility:visible}
+  .panel{position:relative;width:min(440px,100%);border:1px solid rgba(217,189,146,.3);background:#0b0b0c;padding:40px clamp(24px,5vw,44px);transform:translateY(16px);transition:transform .5s ease;text-align:left}
+  .modal.open .panel{transform:none}
+  .panel h3{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:34px;color:#f7f4ef;margin-bottom:8px}
+  .panel p{max-width:none;margin:0 0 24px}
+  .panel label{display:block;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+  .panel input,.panel select{display:block;width:100%;margin-top:8px;background:none;border:0;border-bottom:1px solid rgba(233,230,225,.25);color:var(--text);font:300 14px 'Inter',sans-serif;letter-spacing:0;text-transform:none;padding:8px 0;user-select:text;border-radius:0}
+  .panel select option{background:#0b0b0c}
+  .panel .cta{width:100%;margin-top:10px}
+  .close{position:absolute;top:12px;right:16px;background:none;border:0;color:rgba(233,230,225,.5);font-size:24px;cursor:pointer;transition:color .3s}
+  .close:hover{color:var(--gold)}
+  .visit{margin-top:28px;font-size:12px;letter-spacing:.04em;line-height:1.9}
+  .visit a,.panel p a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(217,189,146,.35)}
+  .thanks{display:none}
+  .sent form{display:none}
+  .sent .thanks{display:block}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.cue i{animation:none}}
+
+  @media (max-width:640px){
+    nav{flex-direction:column;align-items:flex-start;gap:6px}
+    nav .brand{font-size:14px;letter-spacing:.28em}
+    nav{font-size:9.5px;letter-spacing:.22em}
+    section.right{justify-content:flex-start;text-align:left}
+    section.right p{margin-left:0}
+    h1{font-size:clamp(44px,13vw,80px)}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="scene"></canvas>
+<div class="vignette"></div>
+<div class="grain"></div>
+<div class="progress" aria-hidden="true"><span></span></div>
+
+<nav>
+  <div class="brand">GRACE SOLITAIRES</div>
+  <ul>
+    <li><a href="#stone">Collections</a></li>
+    <li><a href="#setting">Craft</a></li>
+    <li><a href="#promise">Visit Us</a></li>
+  </ul>
+</nav>
+
+<main id="scroll-root">
+
+  <section class="hero">
+    <div class="copy">
+      <div class="eyebrow">Grace Solitaires — Lab-Grown Diamonds</div>
+      <h1>The<br>Solitaire</h1>
+      <p>A single certified lab-grown diamond, held in gold. Cut for light, set with care, and made to be handed down.</p>
+    </div>
+    <div class="cue"><i></i>Scroll</div>
+  </section>
+
+  <section>
+    <div class="copy">
+      <div class="eyebrow">01 — The Gold</div>
+      <h2>Nine<br>Karat</h2>
+      <p>Durable nine-karat gold, polished to a mirror finish. Made for everyday wear, and for the days that deserve more.</p>
+    </div>
+  </section>
+
+  <section class="right" id="stone">
+    <div class="copy">
+      <div class="eyebrow">02 — The Diamond</div>
+      <h2>Fifty&#8209;Seven<br>Facets</h2>
+      <p>Lab-grown, yet identical to a mined diamond in chemistry and brilliance. Every facet is angled so light entering the crown returns through the table.</p>
+    </div>
+  </section>
+
+  <section id="setting">
+    <div class="copy">
+      <div class="eyebrow">03 — The Setting</div>
+      <h2>Four<br>Prongs</h2>
+      <p>Raised and filed fine, so the diamond is held securely and never hidden, with every angle left open to the light.</p>
+    </div>
+  </section>
+
+  <section class="right" id="promise">
+    <div class="copy">
+      <div class="eyebrow">04 — The Promise</div>
+      <h2>Made to<br>Be Kept</h2>
+      <p>Certified diamonds, honest guidance and fair prices. Visit us in Karol Bagh and choose an heirloom you fully understand.</p>
+      <button class="cta" id="book">Book a private viewing</button>
+      <p class="visit">2808/20, Beadonpura, Karol Bagh, New Delhi 110005<br>
+        <a href="tel:+919811001259">+91 98110 01259</a> &nbsp;·&nbsp;
+        <a href="https://wa.me/919811001259" target="_blank" rel="noopener">WhatsApp</a> &nbsp;·&nbsp;
+        <a href="https://maps.google.com/maps?q=28.651216,77.191468" target="_blank" rel="noopener">Directions</a></p>
+    </div>
+  </section>
+
+</main>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
+  <div class="panel">
+    <button class="close" aria-label="Close">×</button>
+    <form>
+      <h3 id="m-title">Private viewing</h3>
+      <p>Leave your details and a Grace Solitaires advisor will arrange a time at our Karol Bagh showroom, by video, or on WhatsApp.</p>
+      <label>Name<input required autocomplete="name"></label>
+      <label>Email<input required type="email" autocomplete="email"></label>
+      <label>Mobile / WhatsApp<input type="tel" autocomplete="tel" inputmode="tel"></label>
+      <label>Preferred format<select><option>At the Karol Bagh showroom</option><option>By video call</option><option>On WhatsApp</option></select></label>
+      <button class="cta" type="submit">Request viewing</button>
+    </form>
+    <div class="thanks"><h3>Thank you</h3><p>An advisor will be in touch shortly. Prefer to talk now? Message us on <a href="https://wa.me/919811001259" target="_blank" rel="noopener">WhatsApp</a>.</p></div>
+  </div>
+</div>
+<script>setTimeout(function(){var l=document.getElementById('loader');if(l)l.style.display='none'},12000)</script>
+
+<div id="loader">
+  <div class="loader-inner">
+    <div class="loader-brand">GRACE SOLITAIRES</div>
+    <div class="bar"><span></span></div>
+    <div class="loader-note">Preparing your diamond</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+/* ============================================================
+   RENDERER
+   ============================================================ */
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: true,
+  powerPreference: 'high-performance',
+  alpha: false
+});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.82;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.setClearColor(0x050505, 1);
+
+/* ============================================================
+   STUDIO ENVIRONMENT (custom HDR-like canvas)
+   ============================================================ */
+function createStudioEnvironment() {
+  const c = document.createElement('canvas');
+  c.width = 2048; c.height = 1024;
+  const ctx = c.getContext('2d');
+
+  // Deep charcoal base
+  const baseGrad = ctx.createLinearGradient(0, 0, 0, 1024);
+  baseGrad.addColorStop(0, '#0a0a0c');
+  baseGrad.addColorStop(0.5, '#121215');
+  baseGrad.addColorStop(1, '#08080a');
+  ctx.fillStyle = baseGrad;
+  ctx.fillRect(0, 0, 2048, 1024);
+
+  // Softbox-style bright spots
+  const spots = [
+    { x: 380, y: 260, r: 260, i: 1.0,  col: '#ffffff' },
+    { x: 1560, y: 300, r: 210, i: 0.85, col: '#fff6e6' },
+    { x: 1024, y: 150, r: 180, i: 0.70, col: '#ffffff' },
+    { x: 200, y: 720, r: 160, i: 0.55, col: '#e6eeff' },
+    { x: 1780, y: 760, r: 170, i: 0.50, col: '#ffe9d0' },
+    { x: 700, y: 560, r: 130, i: 0.35, col: '#ffffff' },
+    { x: 1320, y: 600, r: 130, i: 0.35, col: '#ffffff' }
+  ];
+
+  spots.forEach(s => {
+    const g = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r);
+    g.addColorStop(0, `rgba(${hexToRgb(s.col)},${s.i})`);
+    g.addColorStop(0.45, `rgba(${hexToRgb(s.col)},${s.i * 0.35})`);
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(s.x - s.r, s.y - s.r, s.r * 2, s.r * 2);
+  });
+
+  // Subtle horizontal light bar
+  const bar = ctx.createLinearGradient(0, 480, 0, 560);
+  bar.addColorStop(0, 'rgba(255,255,255,0)');
+  bar.addColorStop(0.5, 'rgba(255,255,255,0.12)');
+  bar.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = bar;
+  ctx.fillRect(0, 480, 2048, 80);
+
+  // Slim vertical strip lights: crisper gold highlights without adding overall brightness
+  [[560, .32], [1250, .28], [1850, .22]].forEach(([x, a]) => {
+    const g = ctx.createLinearGradient(x - 26, 0, x + 26, 0);
+    g.addColorStop(0, 'rgba(255,255,255,0)');
+    g.addColorStop(.5, `rgba(255,248,235,${a})`);
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(x - 26, 180, 52, 520);
+  });
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.mapping = THREE.EquirectangularReflectionMapping;
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+function hexToRgb(hex) {
+  const v = parseInt(hex.slice(1), 16);
+  return `${(v >> 16) & 255},${(v >> 8) & 255},${v & 255}`;
+}
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x050505);
+
+const pmrem = new THREE.PMREMGenerator(renderer);
+pmrem.compileEquirectangularShader();
+const studioTex = createStudioEnvironment();
+const envTex = pmrem.fromEquirectangular(studioTex).texture;
+scene.environment = envTex;
+
+/* ============================================================
+   CAMERA
+   ============================================================ */
+const camera = new THREE.PerspectiveCamera(
+  34,
+  window.innerWidth / window.innerHeight,
+  0.05,
+  100
+);
+
+const camPos = { x: 0, y: 1.4, z: 5.2 };
+const lookAt = { x: 0, y: 0.55, z: 0 };
+camera.position.set(camPos.x, camPos.y, camPos.z);
+function fitCamera() {
+  camera.fov = camera.aspect < 1 ? 34 + (1 - camera.aspect) * 30 : 34;
+  camera.updateProjectionMatrix();
+}
+fitCamera();
+camera.lookAt(lookAt.x, lookAt.y, lookAt.z);
+
+/* ============================================================
+   LIGHTS
+   ============================================================ */
+scene.add(new THREE.HemisphereLight(0xffffff, 0x141414, 0.22));
+
+const keyLight = new THREE.DirectionalLight(0xfff2e0, 2.4);
+keyLight.position.set(4, 7, 5);
+scene.add(keyLight);
+
+const rimLight = new THREE.DirectionalLight(0xb8d0ff, 2.0);
+rimLight.position.set(-5, 4, -5);
+scene.add(rimLight);
+
+const fillLight = new THREE.DirectionalLight(0xffe8d0, 0.6);
+fillLight.position.set(0, -3, 3);
+scene.add(fillLight);
+
+const sparkLight = new THREE.PointLight(0xffffff, 12, 10, 2);
+sparkLight.position.set(0.8, 2.0, 1.2);
+scene.add(sparkLight);
+
+const sparkLight2 = new THREE.PointLight(0xfff0d0, 7, 8, 2);
+sparkLight2.position.set(-1.2, 1.5, -0.8);
+scene.add(sparkLight2);
+
+/* ============================================================
+   MATERIALS
+   ============================================================ */
+const goldMaterial = new THREE.MeshPhysicalMaterial({
+  color: 0xf5c878,
+  metalness: 1,
+  roughness: 0.22,
+  envMapIntensity: 1.15,
+  clearcoat: 0.2,
+  clearcoatRoughness: 0.12
+});
+
+const goldDark = new THREE.MeshPhysicalMaterial({
+  color: 0xd4a860,
+  metalness: 1,
+  roughness: 0.3,
+  envMapIntensity: 0.95
+});
+
+const diamondMaterial = new THREE.MeshPhysicalMaterial({
+  color: 0xffffff,
+  metalness: 0,
+  roughness: 0.01,
+  transmission: 1,
+  thickness: 0.8,
+  ior: 2.417,
+  envMapIntensity: 1.7,
+  clearcoat: 1,
+  clearcoatRoughness: 0,
+  flatShading: true,
+  transparent: true,
+  side: THREE.FrontSide
+});
+
+/* ============================================================
+   DIAMOND — full brilliant cut construction
+   ============================================================ */
+const REF = new THREE.Vector3(0, -0.1, 0);
+
+function createBrilliantCut() {
+  const positions = [];
+  const normals = [];
+
+  const r_g = 1;
+  const r_t = 0.53;
+  const h_crown = 0.28;
+  const h_culet = -0.87;
+  const h_gt = 0.012;
+  const h_gb = -0.012;
+
+  const GT = [], GB = [], T = [];
+  for (let j = 0; j < 16; j++) {
+    const a = j * Math.PI / 8;
+    const c = Math.cos(a), s = Math.sin(a);
+    GT.push(new THREE.Vector3(r_g * c, h_gt, r_g * s));
+    GB.push(new THREE.Vector3(r_g * c, h_gb, r_g * s));
+  }
+  for (let k = 0; k < 8; k++) {
+    const a = k * Math.PI / 4;
+    T.push(new THREE.Vector3(r_t * Math.cos(a), h_crown, r_t * Math.sin(a)));
+  }
+
+  const culet = new THREE.Vector3(0, h_culet, 0);
+  const tableCenter = new THREE.Vector3(0, h_crown, 0);
+
+  function addTri(v0, v1, v2) {
+    const ab = new THREE.Vector3().subVectors(v1, v0);
+    const ac = new THREE.Vector3().subVectors(v2, v0);
+    const n = new THREE.Vector3().crossVectors(ab, ac).normalize();
+    const centroid = new THREE.Vector3()
+      .add(v0).add(v1).add(v2).divideScalar(3);
+    const outward = new THREE.Vector3().subVectors(centroid, REF);
+
+    if (n.dot(outward) < 0) {
+      positions.push(v0.x, v0.y, v0.z, v2.x, v2.y, v2.z, v1.x, v1.y, v1.z);
+      normals.push(-n.x, -n.y, -n.z, -n.x, -n.y, -n.z, -n.x, -n.y, -n.z);
+    } else {
+      positions.push(v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+      normals.push(n.x, n.y, n.z, n.x, n.y, n.z, n.x, n.y, n.z);
+    }
+  }
+
+  // Girdle band
+  for (let j = 0; j < 16; j++) {
+    const j1 = (j + 1) % 16;
+    addTri(GB[j], GB[j1], GT[j1]);
+    addTri(GB[j], GT[j1], GT[j]);
+  }
+
+  // Table
+  for (let k = 0; k < 8; k++) {
+    addTri(tableCenter, T[k], T[(k + 1) % 8]);
+  }
+
+  // Bezel facets (8 kites)
+  for (let k = 0; k < 8; k++) {
+    const Tk = T[k];
+    const GL = GT[(2 * k - 1 + 16) % 16];
+    const GB_ = GT[2 * k];
+    const GR = GT[(2 * k + 1) % 16];
+    addTri(Tk, GL, GB_);
+    addTri(Tk, GB_, GR);
+  }
+
+  // Star facets (8 triangles)
+  for (let k = 0; k < 8; k++) {
+    addTri(T[k], T[(k + 1) % 8], GT[(2 * k + 1) % 16]);
+  }
+
+  // Pavilion (16 facets to culet)
+  for (let j = 0; j < 16; j++) {
+    addTri(GB[j], GB[(j + 1) % 16], culet);
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geo.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+  geo.computeBoundingSphere();
+  return geo;
+}
+
+/* ============================================================
+   RING ASSEMBLY
+   ============================================================ */
+const ring = new THREE.Group();
+scene.add(ring);
+
+/* --- Band (torus) --- */
+const band = new THREE.Mesh(
+  new THREE.TorusGeometry(0.9, 0.062, 32, 220),
+  goldMaterial
+);
+band.scale.set(1, 1, 0.92);
+ring.add(band);
+
+/* --- Basket cone --- */
+const basketGeo = new THREE.CylinderGeometry(0.07, 0.17, 0.24, 32, 1, true);
+const basket = new THREE.Mesh(basketGeo, goldMaterial);
+basket.position.y = 1.06;
+ring.add(basket);
+
+/* --- Basket base ring (where it meets band) --- */
+const baseRing = new THREE.Mesh(
+  new THREE.TorusGeometry(0.07, 0.018, 16, 48),
+  goldDark
+);
+baseRing.rotation.x = Math.PI / 2;
+baseRing.position.y = 0.945;
+ring.add(baseRing);
+
+/* --- Gallery torus --- */
+const gallery = new THREE.Mesh(
+  new THREE.TorusGeometry(0.175, 0.014, 16, 64),
+  goldDark
+);
+gallery.rotation.x = Math.PI / 2;
+gallery.position.y = 1.18;
+ring.add(gallery);
+
+/* --- Prongs (4 tapered + spherical tips) --- */
+const PRONG_ANGLES = [45, 135, 225, 315].map(d => d * Math.PI / 180);
+const prongBaseR = 0.175;
+const prongTopR = 0.305;
+const prongBaseY = 1.16;
+const prongTopY = 1.32;
+
+const prongTipGeo = new THREE.SphereGeometry(0.030, 14, 10);
+
+PRONG_ANGLES.forEach(angle => {
+  const cx = Math.cos(angle), cz = Math.sin(angle);
+
+  const B = new THREE.Vector3(prongBaseR * cx, prongBaseY, prongBaseR * cz);
+  const Tp = new THREE.Vector3(prongTopR * cx, prongTopY, prongTopR * cz);
+
+  const dir = new THREE.Vector3().subVectors(Tp, B);
+  const len = dir.length();
+  const mid = new THREE.Vector3().addVectors(B, Tp).multiplyScalar(0.5);
+
+  const prong = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.024, 0.030, len, 14, 1, false),
+    goldMaterial
+  );
+  prong.position.copy(mid);
+  prong.quaternion.setFromUnitVectors(
+    new THREE.Vector3(0, 1, 0),
+    dir.clone().normalize()
+  );
+  ring.add(prong);
+
+  // Prong head
+  const tip = new THREE.Mesh(prongTipGeo, goldMaterial);
+  tip.position.copy(Tp);
+  tip.scale.set(1, 0.85, 1);
+  ring.add(tip);
+});
+
+/* --- Diamond --- */
+const diamondGeo = createBrilliantCut();
+const diamond = new THREE.Mesh(diamondGeo, diamondMaterial);
+diamond.scale.setScalar(0.30);
+diamond.position.y = 1.30;
+ring.add(diamond);
+
+/* --- Floating gold dust --- */
+const DUST = 260;
+const dustPos = new Float32Array(DUST * 3);
+for (let i = 0; i < DUST; i++) {
+  const r = 1.6 + Math.random() * 3, a = Math.random() * Math.PI * 2, y = (Math.random() - 0.3) * 4;
+  dustPos.set([Math.cos(a) * r, y, Math.sin(a) * r], i * 3);
+}
+const dustGeo = new THREE.BufferGeometry();
+dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({
+  color: 0xf0dcb4, size: 0.022, transparent: true, opacity: 0.5, depthWrite: false
+}));
+scene.add(dust);
+ring.scale.setScalar(0.86);
+
+/* --- Diamond glints (soft twinkling stars on the crown) --- */
+function starTex() {
+  const c = document.createElement('canvas'); c.width = c.height = 128;
+  const g = c.getContext('2d');
+  const r = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  r.addColorStop(0, 'rgba(255,255,255,1)');
+  r.addColorStop(.12, 'rgba(255,245,225,.55)');
+  r.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = r; g.fillRect(0, 0, 128, 128);
+  g.fillStyle = 'rgba(255,250,240,.85)';
+  g.beginPath(); g.ellipse(64, 64, 60, 2.5, 0, 0, 7); g.fill();
+  g.beginPath(); g.ellipse(64, 64, 2.5, 60, 0, 0, 7); g.fill();
+  return new THREE.CanvasTexture(c);
+}
+const glintMap = starTex();
+const glints = [[0.10, 1.40, 0.08], [-0.14, 1.37, -0.06], [0.02, 1.36, 0.17]].map(p => {
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: glintMap, transparent: true, opacity: 0,
+    blending: THREE.AdditiveBlending, depthWrite: false
+  }));
+  s.position.set(...p);
+  ring.add(s);
+  return s;
+});
+
+/* --- Soft warm halo on the floor to ground the ring --- */
+const haloCanvas = document.createElement('canvas'); haloCanvas.width = haloCanvas.height = 256;
+{
+  const g = haloCanvas.getContext('2d');
+  const r = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+  r.addColorStop(0, 'rgba(217,189,146,.38)');
+  r.addColorStop(.5, 'rgba(217,189,146,.1)');
+  r.addColorStop(1, 'rgba(217,189,146,0)');
+  g.fillStyle = r; g.fillRect(0, 0, 256, 256);
+}
+const halo = new THREE.Mesh(
+  new THREE.PlaneGeometry(4.2, 4.2),
+  new THREE.MeshBasicMaterial({
+    map: new THREE.CanvasTexture(haloCanvas), transparent: true, opacity: 0.55,
+    blending: THREE.AdditiveBlending, depthWrite: false
+  })
+);
+halo.rotation.x = -Math.PI / 2;
+halo.position.y = -1.05;
+scene.add(halo);
+
+/* ============================================================
+   POST-PROCESSING
+   ============================================================ */
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+
+const bloomPass = new UnrealBloomPass(
+  new THREE.Vector2(window.innerWidth, window.innerHeight),
+  0.28,   // strength
+  0.4,    // radius
+  0.93    // threshold
+);
+composer.addPass(bloomPass);
+
+composer.addPass(new OutputPass());
+
+/* ============================================================
+   SCROLL TIMELINE
+   ============================================================ */
+gsap.registerPlugin(ScrollTrigger);
+
+const tl = gsap.timeline({
+  defaults: { duration: 1, ease: 'none' },
+  scrollTrigger: {
+    trigger: '#scroll-root',
+    start: 'top top',
+    end: 'bottom bottom',
+    scrub: 1.0
+  }
+});
+
+// Phase 1 — orbit right
+tl.to(camPos, { x: 3.2, y: 1.9, z: 4.0 })
+  .to(lookAt, { x: 0.1, y: 0.6, z: 0 }, 0)
+  .to(ring.rotation, { y: Math.PI * 0.5, x: 0.10 }, 0)
+
+  // Phase 2 — push in on the stone from above
+  .to(camPos, { x: 1.1, y: 2.6, z: 2.8 })
+  .to(lookAt, { x: 0, y: 1.15, z: 0 }, '<')
+  .to(ring.rotation, { y: Math.PI * 1.0, x: 0.02 }, '<')
+
+  // Phase 3 — swing low to the opposite side
+  .to(camPos, { x: -3.2, y: 0.9, z: 3.6 })
+  .to(lookAt, { x: 0, y: 0.45, z: 0 }, '<')
+  .to(ring.rotation, { y: Math.PI * 1.5, x: -0.15 }, '<')
+
+  // Phase 4 — rise to a hero top-down shot
+  .to(camPos, { x: 0, y: 4.6, z: 4.2 })
+  .to(lookAt, { x: 0, y: 0.75, z: 0 }, '<')
+  .to(ring.rotation, { y: Math.PI * 2.0, x: 0.20 }, '<');
+
+/* ============================================================
+   TEXT SECTION REVEALS
+   ============================================================ */
+const progFill = document.querySelector('.progress span');
+ScrollTrigger.create({
+  trigger: '#scroll-root', start: 'top top', end: 'bottom bottom',
+  onUpdate: s => { progFill.style.transform = `scaleX(${s.progress})`; }
+});
+
+gsap.utils.toArray('section:not(.hero)').forEach(section => {
+  const copy = section.querySelector('.copy');
+  gsap.fromTo(copy.children,
+    { y: 36, autoAlpha: 0 },
+    {
+      y: 0, autoAlpha: 1, duration: 1.1, stagger: 0.1, ease: 'power3.out',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 74%',
+        end: 'bottom 32%',
+        toggleActions: 'play reverse play reverse'
+      }
+    }
+  );
+});
+
+/* ============================================================
+   POINTER PARALLAX
+   ============================================================ */
+const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
+
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+window.addEventListener('pointermove', e => {
+  if (reduce) return;
+  pointer.tx = (e.clientX / window.innerWidth) * 2 - 1;
+  pointer.ty = (e.clientY / window.innerHeight) * 2 - 1;
+});
+
+/* ============================================================
+   RENDER LOOP
+   ============================================================ */
+const clock = new THREE.Clock();
+let lastT = 0;
+const camCur = { ...camPos }, lookCur = { ...lookAt };
+let firstFrame = true;
+
+function animate() {
+  requestAnimationFrame(animate);
+  if (document.hidden) return;
+
+  const t = clock.getElapsedTime();
+  const dt = Math.min(t - lastT, 0.05);
+  lastT = t;
+
+  const kp = 1 - Math.exp(-dt * 3.2);
+  pointer.x += (pointer.tx - pointer.x) * kp;
+  pointer.y += (pointer.ty - pointer.y) * kp;
+
+  // Frame-rate independent damping on top of the scrub for buttery camera motion
+  const kc = 1 - Math.exp(-dt * 6);
+  for (const a of ['x', 'y', 'z']) {
+    camCur[a] += (camPos[a] - camCur[a]) * kc;
+    lookCur[a] += (lookAt[a] - lookCur[a]) * kc;
+  }
+
+  camera.position.set(
+    camCur.x + pointer.x * 0.22 + Math.sin(t * 0.42) * 0.018,
+    camCur.y - pointer.y * 0.14 + Math.cos(t * 0.38) * 0.018,
+    camCur.z
+  );
+  camera.lookAt(lookCur.x, lookCur.y, lookCur.z);
+
+  // Idle breathing on ring (adds to scroll-driven rotation)
+  ring.rotation.z = Math.sin(t * 0.33) * 0.035;
+  dust.rotation.y = t * 0.02;
+  dust.position.y = Math.sin(t * 0.25) * 0.08;
+  glints.forEach((s, i) => {
+    const v = Math.pow(Math.max(0, Math.sin(t * 1.1 + i * 2.1)), 8);
+    s.material.opacity = v * 0.85;
+    s.material.rotation = t * 0.3;
+    s.scale.setScalar(0.05 + v * 0.22);
+  });
+
+  // Subtle sparkle light orbit
+  sparkLight.position.x = Math.cos(t * 0.6) * 1.1;
+  sparkLight.position.z = Math.sin(t * 0.6) * 1.1;
+  sparkLight.intensity = 11 + Math.sin(t * 3.0) * 3;
+
+  composer.render();
+
+  if (firstFrame) {
+    firstFrame = false;
+    setTimeout(finishLoading, 450);
+  }
+}
+
+/* ============================================================
+   LOADER
+   ============================================================ */
+const loaderEl = document.getElementById('loader');
+const barFill = document.querySelector('.bar span');
+let loadFinished = false;
+
+function finishLoading() {
+  if (loadFinished) return;
+  loadFinished = true;
+
+  gsap.to(barFill, {
+    scaleX: 1,
+    duration: 0.9,
+    ease: 'power2.inOut',
+    onComplete() {
+      gsap.to(loaderEl, {
+        autoAlpha: 0,
+        duration: 0.8,
+        ease: 'power2.inOut',
+        onComplete() { loaderEl.remove(); }
+      });
+      heroIntro();
+    }
+  });
+}
+
+function heroIntro() {
+  gsap.from('.hero .copy > *', {
+    y: 34, autoAlpha: 0,
+    duration: 1.1, stagger: 0.13, ease: 'power3.out'
+  });
+  gsap.from('.cue', { autoAlpha: 0, duration: 1, delay: 0.9, ease: 'power2.out' });
+  gsap.to(ring.scale, { x: 1, y: 1, z: 1, duration: 2.4, ease: 'power3.out' });
+  gsap.from('nav > *', { autoAlpha: 0, y: -14, duration: 1, stagger: 0.1, ease: 'power2.out' });
+}
+
+/* ============================================================
+   RESIZE
+   ============================================================ */
+window.addEventListener('resize', () => {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  camera.aspect = w / h;
+  fitCamera();
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(w, h);
+  composer.setSize(w, h);
+  bloomPass.resolution.set(w, h);
+});
+
+/* ============================================================
+   GO
+   ============================================================ */
+/* ============================================================
+   PRIVATE VIEWING MODAL
+   ============================================================ */
+const modal = document.getElementById('modal');
+const openModal = () => { modal.classList.remove('sent'); modal.classList.add('open'); setTimeout(() => modal.querySelector('input').focus(), 300); };
+const closeModal = () => { modal.classList.remove('open'); document.getElementById('book').focus(); };
+document.getElementById('book').addEventListener('click', openModal);
+modal.querySelector('.close').addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+window.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+modal.querySelector('form').addEventListener('submit', e => { e.preventDefault(); modal.classList.add('sent'); });
+
+animate();
+</script>
+</body>
+</html>
